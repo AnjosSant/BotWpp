@@ -19,36 +19,72 @@ imagens = []
 
 
 def PegarContato():
-    contatos.append(inputContato.get())
-    print(contatos)
+    contato = inputContato.get()
+    if contato != '':
+        contatos.append(contato)
+        print(contatos)
+    else:
+        messagebox.showwarning(
+            "Erro ao enviar", "Digite o número ou nome do contato/Grupo")
+
 
 def ApagarContato():
-    contatos.clear()
-    print(contatos)
-    
-def PegarMsg():
-    msg.append(inputMsg.get('1.0', 'end-1c'))
-    print(msg)
+    if len(contatos) > 0:
+        contatos.clear()
+        print(contatos)
+    else:
+        messagebox.showwarning(
+            "Erro ao apagar", "Adicione pelo menos 1 contato")
+
+
+def PegarMsg():  
+    mensagem = inputMsg.get('1.0', 'end-1c')
+    if mensagem != '':
+        msg.append(mensagem)
+        print(msg)
+    else:
+        messagebox.showwarning(
+            "Erro ao enviar", "Digite uma mensagem")
+
 
 def ApagarMsg():
-    contatos.clear()
-    print(msg)
-    
+    if len(msg) > 0:
+        msg.clear()
+        print(msg)
+    else:
+        messagebox.showwarning(
+            "Erro ao apagar", "Digite uma mensagem")
+
+
 def PegarImg():
-    enviando_img = filedialog.askopenfilename(initialdir='/', title="Select a File", filetypes=(("Image files", ["*jpg*", "*png*", "*jpeg*"]), ("all files", "*-*")))
+    enviando_img = filedialog.askopenfilename(initialdir='/', title="Select a File", filetypes=(
+        ("Image files", ["*jpg*", "*png*", "*jpeg*"]), ("all files", "*-*")))
     imagens.append(enviando_img)
-    print(imagens)
+    if enviando_img != '':
+        imagens.append(enviando_img)
+        print(imagens)
+    else:
+        messagebox.showwarning(
+            "Erro ao adicionar imagem", "Selecione uma imagem")
+
 
 def ApagarImg():
-    imagens.clear()
-    print(imagens)
+    if len(imagens) > 0:
+        imagens.clear()
+        print(imagens)
+    else:
+        messagebox.showwarning(
+            "Erro ao apagar", "Adicione pelo menos 1 imagem")
+
 
 def Enviar():
-    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
+    if len(contatos) > 0 and (len(imagens) > 0 or (len(msg) > 0)):
+        driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
     driver.get("https://web.whatsapp.com/")
     WebDriverWait(driver, timeout=9000000).until(
         EC.presence_of_element_located((By.ID, 'pane-side')))
     slp(1)
+
 
     def SearchContatos(contatos):
         caixa_pesquisa = driver.find_element(By.CLASS_NAME, "_13NKt")
@@ -76,6 +112,9 @@ def Enviar():
         SearchContatos(contato)
         SendMsg(msg)
         SendImg(imagens)
+    else:
+        messagebox.showerror(
+            "Erro ao enviar", "Preencha as informações corretamente...")
 
 
 janela = Tk()
@@ -102,7 +141,7 @@ removerMsg = Button(janela, text="Apagar Mensagem", command=ApagarMsg)
 removerMsg.place(x=100, y=420)
 
 buttonImg = Button(janela, text="adionar imagem", command=PegarImg)
-buttonImg.place(x=100 , y=  450)
+buttonImg.place(x=100, y=450)
 buttonEnviar = Button(janela, text="Enviar", command=Enviar)
 buttonEnviar.place(x=100, y=480)
 
@@ -110,4 +149,3 @@ removerImg = Button(janela, text="Apagar Imagens", command=ApagarImg)
 removerImg.place(x=100, y=500)
 
 janela.mainloop()
-
