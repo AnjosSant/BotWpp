@@ -1,6 +1,7 @@
 #PROGRAMA DE ENVIO AUTOMATICO DE MENSAGENS VIA WPP
 #pip install selenium (version 4.7.2)
 #pip install webdriver-manager (version 3.8.5)
+#pip install tkhtmlview  (version 0.1.1)
 
 from selenium import webdriver
 from time import sleep as slp
@@ -16,7 +17,8 @@ from tkinter import filedialog
 from tkinter import messagebox
 import time
 import tkinter.font as tkFont
-from tkinter import filedialog
+from tkinter import *
+from tkhtmlview import HTMLLabel
 
 #Onde guardaremos as informações que vamos enviar
 contatos = []
@@ -219,32 +221,39 @@ def EnviarImg():
 janela = Tk()
 
 janela.title("ChatBOT")
-janela.geometry("800x600")
+janela.geometry("390x844")
+janela.config(bg="#00A884")
+
+
+
 
 textlabel = Label(
-    janela, text="Digite o nome ou o número de um contato ou grupo").place(x=50, y=100)
+    janela, text="Digite o nome ou o número de um contato ou grupo").place(x=50, y=100, width=300)
 inputContato = Entry(janela)
-inputContato.place(x=50, y=200)
-buttonContato = Button(janela, text="10 e faixa", command=PegarContato)
-buttonContato.place(x=100, y=300)
+inputContato.place(x=50, y=150, width=180)
+buttonContato = Button(janela, text="Adicionar Contato", command=PegarContato)
+buttonContato.place(x=50, y=185)
 
 removerContato = Button(janela, text="Apagar contatos", command=ApagarContato)
-removerContato.place(x=100, y=320)
+removerContato.place(x=250, y=185)
 
+
+textlabelMsg = Label(
+    janela, text="Digite a mensagem que vai ser enviada").place(x=50, y=220, width=300)
 inputMsg = Text(janela)
-inputMsg.place(x=100, y=350, width=300, height=450)
+inputMsg.place(x=50, y=280, width=300, height=200)
 buttonMsg = Button(janela, text="Adicionar a mensagem", command=PegarMsg)
-buttonMsg.place(x=100, y=400)
+buttonMsg.place(x=50, y=500, width=150)
 
 removerMsg = Button(janela, text="Apagar Mensagem", command=ApagarMsg)
-removerMsg.place(x=100, y=420)
+removerMsg.place(x=230, y=500, width=130)
 
 buttonImg = Button(janela, text="adionar imagem", command=PegarImg)
-buttonImg.place(x=100, y=450)
-buttonEnviar = Button(janela, text="Enviar", command=ValidarEnvio)
-buttonEnviar.place(x=100, y=480)
+buttonImg.place(x=50, y=550, width=130)
 
 removerImg = Button(janela, text="Apagar Imagens", command=ApagarImg)
-removerImg.place(x=100, y=500)
+removerImg.place(x=230, y=550, width=130)
 
+buttonEnviar = Button(janela, text="Enviar", command=ValidarEnvio)
+buttonEnviar.place(x=100, y=630, width=200,)
 janela.mainloop()
