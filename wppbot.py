@@ -148,8 +148,8 @@ def Enviar():
     #REPETE O PROCESSO ATÉ SER FINALIZADO
     for contato in contatos:
         SearchContatos(contato)
-        SendMsg(msg)
         SendImg(imagens)
+        SendMsg(msg)
         slp(1)
 
 
