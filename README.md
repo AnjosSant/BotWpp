@@ -22,7 +22,7 @@ Essa aplicação é um chatbot para o whatsapp webe desenvolvido em python
 
  ## Assista ao vídeo para aprender a usar nossa Aplicação
 
-### 1 - 
+### 1 - https://youtu.be/8IFjzmw7aOU
 
 
 
