@@ -11,7 +11,7 @@ Essa aplicação é um chatbot para o whatsapp webe desenvolvido em python
 ## Iniciando
 
 - *Clone o repositório na sua pasta*
-- git clone "(https://github.com/AnjosSant/BotWpp.git)"
+- git clone "https://github.com/AnjosSant/BotWpp.git"
 
 ```
  - pip install selenium
