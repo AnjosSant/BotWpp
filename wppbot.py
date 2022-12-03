@@ -1,3 +1,7 @@
+#PROGRAMA DE ENVIO AUTOMATICO DE MENSAGENS VIA WPP
+#pip install selenium (version 4.7.2)
+#pip install webdriver-manager (version 3.8.5)
+
 from selenium import webdriver
 from time import sleep as slp
 from selenium.webdriver.common.keys import Keys
@@ -12,22 +16,49 @@ from tkinter import filedialog
 from tkinter import messagebox
 import time
 import tkinter.font as tkFont
+from tkinter import filedialog
 
+#Onde guardaremos as informações que vamos enviar
 contatos = []
 msg = []
 imagens = []
 
 
+
+
+
+#Função que valida o que está sendo enviado
+def ValidarEnvio():
+    if len(contatos) > 0 and (len(imagens) > 0 and (len(msg) > 0)):
+        Enviar()
+    else:
+        print("err0")
+
+    if len(contatos) != 0:
+
+        if (len(msg) > 0 and (len(imagens) == 0)):
+            EnviarMsg()
+        elif (len(imagens) > 0 and (len(msg) == 0)):
+            EnviarImg()
+        else:
+            messagebox.showwarning("Erro ao Enviar", "Preencha as informaçôes nescessárias")
+    else:
+        messagebox.showwarning(
+        "Erro ao Enviar", "Preencha as informaçôes nescessárias")
+
+
+#Função para Guardar o contato
 def PegarContato():
     contato = inputContato.get()
     if contato != '':
         contatos.append(contato)
         print(contatos)
+        messagebox.showinfo("Sucesso", "Contato adicionado com sucesso")
     else:
         messagebox.showwarning(
             "Erro ao enviar", "Digite o número ou nome do contato/Grupo")
 
-
+#Função para apagar os contatos dentro do array
 def ApagarContato():
     if len(contatos) > 0:
         contatos.clear()
@@ -37,16 +68,18 @@ def ApagarContato():
             "Erro ao apagar", "Adicione pelo menos 1 contato")
 
 
+#Função para Guardar a mensagem que vai ser enviada
 def PegarMsg():  
     mensagem = inputMsg.get('1.0', 'end-1c')
     if mensagem != '':
         msg.append(mensagem)
+
         print(msg)
     else:
         messagebox.showwarning(
             "Erro ao enviar", "Digite uma mensagem")
 
-
+#Função para apagar a mensagem
 def ApagarMsg():
     if len(msg) > 0:
         msg.clear()
@@ -56,10 +89,10 @@ def ApagarMsg():
             "Erro ao apagar", "Digite uma mensagem")
 
 
+#Função para selecionar uma imagem
 def PegarImg():
     enviando_img = filedialog.askopenfilename(initialdir='/', title="Select a File", filetypes=(
-        ("Image files", ["*jpg*", "*png*", "*jpeg*"]), ("all files", "*-*")))
-    imagens.append(enviando_img)
+        ("Image files", ["jpg", "png", "jpeg"]), ("all files", "-")))
     if enviando_img != '':
         imagens.append(enviando_img)
         print(imagens)
@@ -67,7 +100,7 @@ def PegarImg():
         messagebox.showwarning(
             "Erro ao adicionar imagem", "Selecione uma imagem")
 
-
+#Função para apaguar a imagem
 def ApagarImg():
     if len(imagens) > 0:
         imagens.clear()
@@ -76,21 +109,23 @@ def ApagarImg():
         messagebox.showwarning(
             "Erro ao apagar", "Adicione pelo menos 1 imagem")
 
-
+#função para enviar caso exista uma imagem e uma mensagem
 def Enviar():
-    if len(contatos) > 0 and (len(imagens) > 0 or (len(msg) > 0)):
-        driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
+   #Abre o whatsapp Web
+    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
     driver.get("https://web.whatsapp.com/")
+   #Espera o QRcode ser Escaneado para prosseguir
     WebDriverWait(driver, timeout=9000000).until(
-        EC.presence_of_element_located((By.ID, 'pane-side')))
+            EC.presence_of_element_located((By.ID, 'pane-side')))
     slp(1)
 
-
+    #Procura o nome do contato ou grupo na barra de pesquisa
     def SearchContatos(contatos):
         caixa_pesquisa = driver.find_element(By.CLASS_NAME, "_13NKt")
         caixa_pesquisa.send_keys(contatos, Keys.ENTER)
         slp(3)
 
+    #DIGITAR A MENSAGEM E ENVIAR
     def SendMsg(msg):
         escrevendo_msg = driver.find_element(By.CLASS_NAME, "p3_M1")
         escrevendo_msg.send_keys(msg)
@@ -98,25 +133,89 @@ def Enviar():
         escrevendo_msg.send_keys("", Keys.ENTER)
         slp(1.5)
 
+    #SELECIONAR A IMAGEM E ENVIAR
     def SendImg(imagens):
-       
-        driver.find_element(By.CSS_SELECTOR, "span[data-icon='clip']").click()     
+        driver.find_element(By.CSS_SELECTOR, "span[data-icon='clip']").click()
         attach = driver.find_element(By.CSS_SELECTOR, "input[type='file']")
         attach.send_keys(imagens)
         time.sleep(2)
         send = driver.find_element(By.XPATH, '//div[contains(@class, "_165_h _2HL9j")]')
-        send.click()    
-        
-        
+        send.click()
+
+
+    #REPETE O PROCESSO ATÉ SER FINALIZADO
     for contato in contatos:
         SearchContatos(contato)
         SendMsg(msg)
         SendImg(imagens)
-    else:
-        messagebox.showerror(
-            "Erro ao enviar", "Preencha as informações corretamente...")
+        slp(1)
 
 
+#FUNÇÃO QUE ENVIA SOMENTE A MENSAGEM
+def EnviarMsg():
+    # Abre o whatsapp Web
+    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
+    driver.get("https://web.whatsapp.com/")
+    # Espera o QRcode ser Escaneado para prosseguir
+    WebDriverWait(driver, timeout=9000000).until(
+        EC.presence_of_element_located((By.ID, 'pane-side')))
+    slp(1)
+
+    # Procura o nome do contato ou grupo na barra de pesquisa
+    def SearchContatos(contatos):
+        caixa_pesquisa = driver.find_element(By.CLASS_NAME, "_13NKt")
+        caixa_pesquisa.send_keys(contatos, Keys.ENTER)
+        slp(3)
+
+    # DIGITAR A MENSAGEM E ENVIAR
+    def SendMsg(msg):
+        escrevendo_msg = driver.find_element(By.CLASS_NAME, "p3_M1")
+        escrevendo_msg.send_keys(msg)
+        slp(1.5)
+        escrevendo_msg.send_keys("", Keys.ENTER)
+        slp(1.5)
+
+
+    # REPETE O PROCESSO ATÉ SER FINALIZADO
+    for contato in contatos:
+        SearchContatos(contato)
+        SendMsg(msg)
+        slp(1)
+
+
+#FUNÇÃO QUE ENVIA SOMENTE A IMAGEM
+def EnviarImg():
+    # Abre o whatsapp Web
+    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
+    driver.get("https://web.whatsapp.com/")
+    # Espera o QRcode ser Escaneado para prosseguir
+    WebDriverWait(driver, timeout=9000000).until(
+        EC.presence_of_element_located((By.ID, 'pane-side')))
+    slp(1)
+
+    # Procura o nome do contato ou grupo na barra de pesquisa
+    def SearchContatos(contatos):
+        caixa_pesquisa = driver.find_element(By.CLASS_NAME, "_13NKt")
+        caixa_pesquisa.send_keys(contatos, Keys.ENTER)
+        slp(3)
+
+
+    # SELECIONAR A IMAGEM E ENVIAR
+    def SendImg(imagens):
+        driver.find_element(By.CSS_SELECTOR, "span[data-icon='clip']").click()
+        attach = driver.find_element(By.CSS_SELECTOR, "input[type='file']")
+        attach.send_keys(imagens)
+        time.sleep(2)
+        send = driver.find_element(By.XPATH, '//div[contains(@class, "_165_h _2HL9j")]')
+        send.click()
+
+    # REPETE O PROCESSO ATÉ SER FINALIZADO
+    for contato in contatos:
+        SearchContatos(contato)
+        SendImg(imagens)
+        slp(1)
+
+#INTERFACE
 janela = Tk()
 
 janela.title("ChatBOT")
@@ -142,7 +241,7 @@ removerMsg.place(x=100, y=420)
 
 buttonImg = Button(janela, text="adionar imagem", command=PegarImg)
 buttonImg.place(x=100, y=450)
-buttonEnviar = Button(janela, text="Enviar", command=Enviar)
+buttonEnviar = Button(janela, text="Enviar", command=ValidarEnvio)
 buttonEnviar.place(x=100, y=480)
 
 removerImg = Button(janela, text="Apagar Imagens", command=ApagarImg)
